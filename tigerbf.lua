@@ -1,78 +1,40 @@
--- [[ TIGER HUB (BF) - MEGA UPDATE 2026 ]] --
+-- [[ TIGER HUB (BF) - 100% WORKING VERSION ]] --
 local function LoadLib()
-    local sources = {
-        "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
-        "https://pastebin.com/raw/vpfSeZ9m"
-    }
-    for _, url in ipairs(sources) do
-        local success, res = pcall(game.HttpGet, game, url)
-        if success and res then
-            local func = loadstring(res)
-            if func then return func() end
-        end
-    end
+    local success, res = pcall(game.HttpGet, game, "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua")
+    if success then return loadstring(res)() end
+    return loadstring(game:HttpGet("https://pastebin.com/raw/vpfSeZ9m"))()
 end
 
 local Library = LoadLib()
-if not Library then return end
+local Window = Library.CreateLib("Tiger Hub: BF FIXED", "DarkTheme")
 
-local Window = Library.CreateLib("Tiger Hub: BF ULTIMATE", "DarkTheme")
+-- ГЛАВНАЯ ВКЛАДКА
+local Main = Window:NewTab("Main")
+local MSec = Main:NewSection("Universal Blox Fruits Scripts")
 
--- ГЛАВНЫЕ ХАБЫ (Здесь работает ВСЁ)
-local Main = Window:NewTab("Main Farm")
-local MSec = Main:NewSection("Выбери любой хаб (Auto-Farm внутри)")
-
-MSec:NewButton("Zaque Hub (Best Fast Attack)", "Самый быстрый фарм уровней", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Meidu_Sucre/ZaqueHub/main/Zaque%20Hub"))()
+MSec:NewButton("REDZ HUB (AUTO-FARM & ROLL)", "Самый рабочий на сегодня", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzHub/main/Player.lua"))()
 end)
 
-MSec:NewButton("Mukuru Hub (Top 2026)", "Стабильный фарм без вылетов", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LOBITS/MukuruHub/main/Start.lua"))()
+MSec:NewButton("W-AZURE (FULL HUB)", "Если Redz не открылся", function()
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/3b2169cf533361b695d18ddc4d6718d9.lua"))()
 end)
 
-MSec:NewButton("Hoho Hub (Classic)", "Проверенный временем авто-фарм", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_HUB/main/StartLoad.lua'))()
-end)
-
--- ФРУКТЫ (Roll & Inventory)
-local Fruit = Window:NewTab("Fruits")
-local FSec = Fruit:NewSection("Работа с фруктами")
-
-FSec:NewButton("Auto Roll Fruit", "Автоматически крутить фрукты", function()
-    -- Вызывает меню, где можно настроить авто-ролл
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XERO-HUB/XERO-FREE/main/main.lua"))()
-end)
-
-FSec:NewButton("Fruit Inventory UI", "Посмотреть свои фрукты", function()
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("GetInventoryFruits")
-end)
-
--- ПРИКОЛЫ (Misc)
+-- ПРИКОЛЫ
 local Misc = Window:NewTab("Misc")
-local MSec2 = Misc:NewSection("Полезные функции")
+local MSec2 = Misc:NewSection("Player Tools")
 
-MSec2:NewButton("Walk On Water (Platform)", "Ходить по воде", function()
-    local p = Instance.new("Part", workspace)
-    p.Size = Vector3.new(500, 2, 500)
-    p.Anchored = true
-    p.Transparency = 0.5
-    spawn(function()
-        while task.wait() do
-            p.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position.X, 0, game.Players.LocalPlayer.Character.HumanoidRootPart.Position.Z)
-        end
-    end)
+MSec2:NewSlider("Speed", "Скорость", 250, 16, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
 end)
 
-MSec2:NewButton("Infinite Energy", "Бесконечная энергия", function()
+MSec2:NewButton("Inf Energy", "Беск. Энергия", function()
     game:GetService("RunService").RenderStepped:Connect(function()
-        pcall(function()
-            game.Players.LocalPlayer.Character.Energy.Value = game.Players.LocalPlayer.Character.Energy.MaxValue
-        end)
+        pcall(function() game.Players.LocalPlayer.Character.Energy.Value = 10000 end)
     end)
 end)
 
 -- НАСТРОЙКИ
-local Set = Window:NewTab("Settings")
-Set:NewSection("Control"):NewKeybind("Toggle UI", "R-Ctrl", Enum.KeyCode.RightControl, function()
+Window:NewTab("Settings"):NewSection("UI"):NewKeybind("Close", "R-Ctrl", Enum.KeyCode.RightControl, function()
     Library:ToggleUI()
 end)
