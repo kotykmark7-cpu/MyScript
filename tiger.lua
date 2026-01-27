@@ -1,7 +1,16 @@
--- [[ TIGERCLAW HUB FIXED ]] --
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+-- [[ TIGERCLAW HUB FIXED FINAL ]] --
+local success, Library = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+end)
+
+if not success or not Library then
+    warn("Library failed to load!")
+    return
+end
+
 local Window = Library.CreateLib("TigerClaw Hub v1.1", "DarkTheme")
 
+-- ПЕРЕМЕННЫЕ
 local player = game.Players.LocalPlayer
 local flying = false
 _G.FlySpeed = 50
@@ -49,10 +58,17 @@ MSec:NewToggle("Fly", "Полет", function(state)
 end)
 
 MSec:NewSlider("Fly Speed", "Скорость полета", 300, 10, function(s) _G.FlySpeed = s end)
-MSec:NewSlider("WalkSpeed", "Бег", 250, 16, function(s) player.Character.Humanoid.WalkSpeed = s end)
+MSec:NewSlider("WalkSpeed", "Бег", 250, 16, function(s) 
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = s 
+    end
+end)
+
 MSec:NewSlider("JumpPower", "Прыжок", 300, 50, function(p) 
-    player.Character.Humanoid.UseJumpPower = true
-    player.Character.Humanoid.JumpPower = p 
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.UseJumpPower = true
+        player.Character.Humanoid.JumpPower = p 
+    end
 end)
 
 -- SETTINGS
