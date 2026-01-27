@@ -1,4 +1,4 @@
--- [[ TIGER HUB (BF) - REPAIRED & WORKING 2026 ]] --
+-- [[ TIGER HUB (BF) - MEGA UPDATE 2026 ]] --
 local function LoadLib()
     local sources = {
         "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
@@ -16,32 +16,50 @@ end
 local Library = LoadLib()
 if not Library then return end
 
-local Window = Library.CreateLib("Tiger Hub: BF REPAIRED", "DarkTheme")
+local Window = Library.CreateLib("Tiger Hub: BF ULTIMATE", "DarkTheme")
 
--- ГЛАВНЫЙ ФАРМ (Здесь всё рабочее)
+-- ГЛАВНЫЕ ХАБЫ (Здесь работает ВСЁ)
 local Main = Window:NewTab("Main Farm")
-local MSec = Main:NewSection("Рабочие Хабы (Fast Attack внутри)")
+local MSec = Main:NewSection("Выбери любой хаб (Auto-Farm внутри)")
 
-MSec:NewButton("REDZ HUB (Лучший сейчас)", "Авто-фарм, Фаст атака, Статы", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzHub/main/Player.lua"))()
+MSec:NewButton("Zaque Hub (Best Fast Attack)", "Самый быстрый фарм уровней", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Meidu_Sucre/ZaqueHub/main/Zaque%20Hub"))()
 end)
 
-MSec:NewButton("ALCHEMY HUB V3", "Очень быстрый фарм уровней", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Clutch_Doge/AlchemyHub/main/Main.lua"))()
+MSec:NewButton("Mukuru Hub (Top 2026)", "Стабильный фарм без вылетов", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/LOBITS/MukuruHub/main/Start.lua"))()
 end)
 
--- ПРИКОЛЮХИ (Misc)
+MSec:NewButton("Hoho Hub (Classic)", "Проверенный временем авто-фарм", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/acsu123/HOHO_HUB/main/StartLoad.lua'))()
+end)
+
+-- ФРУКТЫ (Roll & Inventory)
+local Fruit = Window:NewTab("Fruits")
+local FSec = Fruit:NewSection("Работа с фруктами")
+
+FSec:NewButton("Auto Roll Fruit", "Автоматически крутить фрукты", function()
+    -- Вызывает меню, где можно настроить авто-ролл
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XERO-HUB/XERO-FREE/main/main.lua"))()
+end)
+
+FSec:NewButton("Fruit Inventory UI", "Посмотреть свои фрукты", function()
+    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("GetInventoryFruits")
+end)
+
+-- ПРИКОЛЫ (Misc)
 local Misc = Window:NewTab("Misc")
-local MSec2 = Misc:NewSection("Способности и Мир")
+local MSec2 = Misc:NewSection("Полезные функции")
 
-MSec2:NewButton("Walk On Water (FIXED)", "Ходить по воде (нажми один раз)", function()
-    local pw = Instance.new("Part", workspace)
-    pw.Name = "TigerWater"
-    pw.Size = Vector3.new(100, 2, 100)
-    pw.Transparency = 1
-    pw.Anchored = true
-    game:GetService("RunService").RenderStepped:Connect(function()
-        pw.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position.X, 0.5, game.Players.LocalPlayer.Character.HumanoidRootPart.Position.Z)
+MSec2:NewButton("Walk On Water (Platform)", "Ходить по воде", function()
+    local p = Instance.new("Part", workspace)
+    p.Size = Vector3.new(500, 2, 500)
+    p.Anchored = true
+    p.Transparency = 0.5
+    spawn(function()
+        while task.wait() do
+            p.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position.X, 0, game.Players.LocalPlayer.Character.HumanoidRootPart.Position.Z)
+        end
     end)
 end)
 
@@ -53,32 +71,8 @@ MSec2:NewButton("Infinite Energy", "Бесконечная энергия", func
     end)
 end)
 
--- ФРУКТЫ (Sniper & Finder)
-local Fruit = Window:NewTab("Fruits")
-local FSec = Fruit:NewSection("Работа с фруктами")
-
-FSec:NewButton("Fruit Finder (ESP)", "Показать фрукты на сервере", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/IratuServices/PlayerESP/main/ESP.lua"))() -- Используем универсальный ESP
-end)
-
-FSec:NewButton("Auto Buy Fruits", "Магазин (Sniper)", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditibi/bf/main/fruit"))()
-end)
-
--- ПЕРСОНАЖ
-local Ply = Window:NewTab("Player")
-local PSec = Ply:NewSection("Скорость и прыжки")
-
-PSec:NewSlider("Speed", "Скорость бега", 250, 16, function(s)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
-end)
-
-PSec:NewSlider("Jump", "Высота прыжка", 300, 50, function(s)
-    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
-end)
-
 -- НАСТРОЙКИ
 local Set = Window:NewTab("Settings")
-Set:NewSection("Управление"):NewKeybind("Закрыть Меню", "R-Ctrl", Enum.KeyCode.RightControl, function()
+Set:NewSection("Control"):NewKeybind("Toggle UI", "R-Ctrl", Enum.KeyCode.RightControl, function()
     Library:ToggleUI()
 end)
