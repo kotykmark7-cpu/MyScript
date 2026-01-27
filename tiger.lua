@@ -1,4 +1,4 @@
--- [[ TIGERCLAW HUB STABLE ]] --
+-- [[ TIGERCLAW HUB STABLE + FLY SPEED ]] --
 local function LoadLib()
     local sources = {
         "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
@@ -14,14 +14,16 @@ local function LoadLib()
 end
 
 local Library = LoadLib()
-if not Library then 
-    warn("Failed to load Library!") 
-    return 
-end
+if not Library then return end
 
-local Window = Library.CreateLib("TigerClaw Hub v1.1", "DarkTheme")
+local Window = Library.CreateLib("TigerClaw Hub v1.2", "DarkTheme")
 
--- ГЛАВНАЯ
+-- ПЕРЕМЕННЫЕ
+local player = game.Players.LocalPlayer
+_G.FlySpeed = 50 -- Скорость по умолчанию
+local flying = false
+
+-- TECH
 local Tech = Window:NewTab("Tech")
 local TSec = Tech:NewSection("Supa & Lag")
 
@@ -42,19 +44,20 @@ TSec:NewToggle("Fast Lag", "Lag Switch", function(state)
     end)
 end)
 
--- ДВИЖЕНИЕ
+-- MOVEMENT
 local Move = Window:NewTab("Movement")
 local MSec = Move:NewSection("Controls")
 
 MSec:NewToggle("Fly", "Полет", function(state)
-    local char = game.Players.LocalPlayer.Character
-    if state and char and char:FindFirstChild("HumanoidRootPart") then
+    flying = state
+    local char = player.Character
+    if flying and char and char:FindFirstChild("HumanoidRootPart") then
         local bv = Instance.new("BodyVelocity", char.HumanoidRootPart)
         bv.Name = "TFly"
         bv.MaxForce = Vector3.new(1,1,1) * math.huge
         spawn(function()
-            while state do
-                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * 50
+            while flying do
+                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * _G.FlySpeed
                 task.wait()
             end
             bv:Destroy()
@@ -62,8 +65,15 @@ MSec:NewToggle("Fly", "Полет", function(state)
     end
 end)
 
+-- СЛАЙДЕР СКОРОСТИ ПОЛЕТА
+MSec:NewSlider("Fly Speed", "Скорость полета", 300, 10, function(s)
+    _G.FlySpeed = s
+end)
+
 MSec:NewSlider("WalkSpeed", "Бег", 250, 16, function(s) 
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s 
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = s 
+    end
 end)
 
 -- НАСТРОЙКИ
