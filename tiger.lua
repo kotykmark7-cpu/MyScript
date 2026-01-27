@@ -1,21 +1,27 @@
--- [[ TIGERCLAW HUB FIXED FINAL ]] --
-local success, Library = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-end)
+-- [[ TIGERCLAW HUB STABLE ]] --
+local function LoadLib()
+    local sources = {
+        "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
+        "https://pastebin.com/raw/vpfSeZ9m"
+    }
+    for _, url in ipairs(sources) do
+        local success, res = pcall(game.HttpGet, game, url)
+        if success and res then
+            local func = loadstring(res)
+            if func then return func() end
+        end
+    end
+end
 
-if not success or not Library then
-    warn("Library failed to load!")
-    return
+local Library = LoadLib()
+if not Library then 
+    warn("Failed to load Library!") 
+    return 
 end
 
 local Window = Library.CreateLib("TigerClaw Hub v1.1", "DarkTheme")
 
--- ПЕРЕМЕННЫЕ
-local player = game.Players.LocalPlayer
-local flying = false
-_G.FlySpeed = 50
-
--- TECH
+-- ГЛАВНАЯ
 local Tech = Window:NewTab("Tech")
 local TSec = Tech:NewSection("Supa & Lag")
 
@@ -36,20 +42,19 @@ TSec:NewToggle("Fast Lag", "Lag Switch", function(state)
     end)
 end)
 
--- MOVEMENT
+-- ДВИЖЕНИЕ
 local Move = Window:NewTab("Movement")
 local MSec = Move:NewSection("Controls")
 
 MSec:NewToggle("Fly", "Полет", function(state)
-    flying = state
-    local char = player.Character
-    if flying and char and char:FindFirstChild("HumanoidRootPart") then
+    local char = game.Players.LocalPlayer.Character
+    if state and char and char:FindFirstChild("HumanoidRootPart") then
         local bv = Instance.new("BodyVelocity", char.HumanoidRootPart)
         bv.Name = "TFly"
         bv.MaxForce = Vector3.new(1,1,1) * math.huge
         spawn(function()
-            while flying do
-                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * _G.FlySpeed
+            while state do
+                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * 50
                 task.wait()
             end
             bv:Destroy()
@@ -57,19 +62,9 @@ MSec:NewToggle("Fly", "Полет", function(state)
     end
 end)
 
-MSec:NewSlider("Fly Speed", "Скорость полета", 300, 10, function(s) _G.FlySpeed = s end)
 MSec:NewSlider("WalkSpeed", "Бег", 250, 16, function(s) 
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.WalkSpeed = s 
-    end
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s 
 end)
 
-MSec:NewSlider("JumpPower", "Прыжок", 300, 50, function(p) 
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.UseJumpPower = true
-        player.Character.Humanoid.JumpPower = p 
-    end
-end)
-
--- SETTINGS
+-- НАСТРОЙКИ
 Window:NewTab("Set"):NewSection("UI"):NewKeybind("Close", "R-Ctrl", Enum.KeyCode.RightControl, function() Library:ToggleUI() end)
