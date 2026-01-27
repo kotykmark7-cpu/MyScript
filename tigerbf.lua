@@ -1,4 +1,4 @@
--- [[ TIGER HUB (BF) ULTIMATE EDITION ]] --
+-- [[ TIGER HUB (BF) - REPAIRED & WORKING 2026 ]] --
 local function LoadLib()
     local sources = {
         "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
@@ -16,74 +16,69 @@ end
 local Library = LoadLib()
 if not Library then return end
 
-local Window = Library.CreateLib("Tiger Hub: Blox Fruits ELITE", "DarkTheme")
+local Window = Library.CreateLib("Tiger Hub: BF REPAIRED", "DarkTheme")
 
--- ГЛАВНЫЙ ФАРМ (ДЕНЬГИ И УРОВНИ)
+-- ГЛАВНЫЙ ФАРМ (Здесь всё рабочее)
 local Main = Window:NewTab("Main Farm")
-local MSec = Main:NewSection("Money & Level Farm")
+local MSec = Main:NewSection("Рабочие Хабы (Fast Attack внутри)")
 
-MSec:NewButton("Redz Hub (Best for Beli)", "Лучший фарм денег и уровней", function()
+MSec:NewButton("REDZ HUB (Лучший сейчас)", "Авто-фарм, Фаст атака, Статы", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzHub/main/Player.lua"))()
 end)
 
-MSec:NewButton("W-Azure Hub", "Очень много функций фарма", function()
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/3b2169cf533361b695d18ddc4d6718d9.lua"))()
+MSec:NewButton("ALCHEMY HUB V3", "Очень быстрый фарм уровней", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Clutch_Doge/AlchemyHub/main/Main.lua"))()
 end)
 
--- АВТО-ИВЕНТЫ
-local Events = Window:NewTab("Events")
-local ESec = Events:NewSection("Auto Events & Sea")
+-- ПРИКОЛЮХИ (Misc)
+local Misc = Window:NewTab("Misc")
+local MSec2 = Misc:NewSection("Способности и Мир")
 
-ESec:NewButton("Auto Sea Events", "Авто-ивенты в море", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XeroHub/XeroHub/main/main.lua"))()
-end)
-
-ESec:NewButton("Mirage Island Finder", "Поиск острова Мираж", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/xtrey10x/xtrey10x/main/solaris.lua"))()
-end)
-
--- БОЕВЫЕ ФУНКЦИИ И ВОДА
-local Combat = Window:NewTab("Combat & Misc")
-local CSec = Combat:NewSection("Abilities")
-
-CSec:NewToggle("Walk On Water", "Ходить по воде", function(state)
-    _G.WaterWalk = state
-    spawn(function()
-        while _G.WaterWalk do
-            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
-                if game.Players.LocalPlayer.Character.Humanoid.FloorMaterial == Enum.Material.Water then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
-                end
-            end
-            task.wait()
-        end
-    end)
-end)
-
-CSec:NewButton("No Water Damage", "Вода не бьет", function()
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonShip") -- Баг на бессмертие в воде
-end)
-
-CSec:NewButton("Infinite Energy", "Бесконечная энергия", function()
+MSec2:NewButton("Walk On Water (FIXED)", "Ходить по воде (нажми один раз)", function()
+    local pw = Instance.new("Part", workspace)
+    pw.Name = "TigerWater"
+    pw.Size = Vector3.new(100, 2, 100)
+    pw.Transparency = 1
+    pw.Anchored = true
     game:GetService("RunService").RenderStepped:Connect(function()
-        game.Players.LocalPlayer.Character.Energy.Value = game.Players.LocalPlayer.Character.Energy.MaxValue
+        pw.CFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position.X, 0.5, game.Players.LocalPlayer.Character.HumanoidRootPart.Position.Z)
     end)
 end)
 
--- АВТО-СТАТЫ
-local Stats = Window:NewTab("Stats")
-local SSec = Stats:NewSection("Auto Update Stats")
-
-SSec:NewButton("Add Points: Melee", "Все очки в ближний бой", function()
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AddPoint", "Melee", 100)
+MSec2:NewButton("Infinite Energy", "Бесконечная энергия", function()
+    game:GetService("RunService").RenderStepped:Connect(function()
+        pcall(function()
+            game.Players.LocalPlayer.Character.Energy.Value = game.Players.LocalPlayer.Character.Energy.MaxValue
+        end)
+    end)
 end)
 
-SSec:NewButton("Add Points: Defense", "Все очки в защиту", function()
-    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AddPoint", "Defense", 100)
+-- ФРУКТЫ (Sniper & Finder)
+local Fruit = Window:NewTab("Fruits")
+local FSec = Fruit:NewSection("Работа с фруктами")
+
+FSec:NewButton("Fruit Finder (ESP)", "Показать фрукты на сервере", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/IratuServices/PlayerESP/main/ESP.lua"))() -- Используем универсальный ESP
+end)
+
+FSec:NewButton("Auto Buy Fruits", "Магазин (Sniper)", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditibi/bf/main/fruit"))()
+end)
+
+-- ПЕРСОНАЖ
+local Ply = Window:NewTab("Player")
+local PSec = Ply:NewSection("Скорость и прыжки")
+
+PSec:NewSlider("Speed", "Скорость бега", 250, 16, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+
+PSec:NewSlider("Jump", "Высота прыжка", 300, 50, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
 end)
 
 -- НАСТРОЙКИ
 local Set = Window:NewTab("Settings")
-Set:NewSection("Control"):NewKeybind("Toggle UI", "R-Ctrl", Enum.KeyCode.RightControl, function()
+Set:NewSection("Управление"):NewKeybind("Закрыть Меню", "R-Ctrl", Enum.KeyCode.RightControl, function()
     Library:ToggleUI()
 end)
