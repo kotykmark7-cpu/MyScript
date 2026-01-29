@@ -1,63 +1,49 @@
--- [[ TIGER FAST - ULTIMATE FARMLIST ]] --
+-- [[ TIGER INF - GHOST & FLY MODE ]] --
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Tiger Ultimate 🐯",
-   LoadingTitle = "Скрипт от Tiger",
+   Name = "Tiger INF 👻",
+   LoadingTitle = "Запуск режима Призрака...",
    LoadingSubtitle = "by Tiger",
    ConfigurationSaving = { Enabled = false }
 })
 
-local FarmTab = Window:CreateTab("Auto Farm", 4483362458)
+local Tab = Window:CreateTab("Movement", 4483362458)
 
-FarmTab:CreateSection("Мощные фармилки (как Gravity Hub)")
+_G.Noclip = false
 
-FarmTab:CreateButton({
-   Name = "ЗАПУСТИТЬ AUTO-FARM (Gravity Method)",
-   Callback = function()
-       -- Это база того самого скрипта, который ты просил
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruit/refs/heads/main/Main.lua"))()
-   end,
-})
-
-FarmTab:CreateButton({
-   Name = "Redz Hub (Лучший для мобилок)",
-   Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzHub/main/Player.lua"))()
-   end,
-})
-
-local CombatTab = Window:CreateTab("Combat Extras", 4483362458)
-
-CombatTab:CreateToggle({
-   Name = "Fast Attack (Speed X2)",
+-- КНОПКА: ПРОХОД СКВОЗЬ СТЕНЫ
+Tab:CreateToggle({
+   Name = "Noclip (Сквозь стены)",
    CurrentValue = false,
    Callback = function(Value)
-       _G.FastAttack = Value
-       spawn(function()
-           while _G.FastAttack do
-               pcall(function()
-                   game:GetService("VirtualUser"):CaptureController()
-                   game:GetService("VirtualUser"):Button1Down(Vector2.new(1280, 672))
-               end)
-               task.wait(0.01)
-           end
-       end)
+       _G.Noclip = Value
    end,
 })
 
-CombatTab:CreateSlider({
-   Name = "Attack Range (Дальность)",
-   Range = {3, 100},
-   Increment = 1,
-   CurrentValue = 3.5,
-   Callback = function(Value)
-       pcall(function()
-           local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
-           if tool and tool:FindFirstChild("Handle") then
-               tool.Handle.Size = Vector3.new(Value, Value, Value)
-               tool.Handle.CanCollide = false
-           end
+-- КНОПКА: БЕСКОНЕЧНЫЕ ПРЫЖКИ
+Tab:CreateButton({
+   Name = "Infinite Jump (Беск. прыжки)",
+   Callback = function()
+       local Player = game:GetService("Players").LocalPlayer
+       game:GetService("UserInputService").JumpRequest:Connect(function()
+           Player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
        end)
+       Rayfield:Notify({Title = "Tiger INF", Content = "Теперь ты можешь прыгать в воздухе!"})
    end,
 })
+
+-- Логика прохода сквозь стены
+game:GetService("RunService").Stepped:Connect(function()
+    if _G.Noclip then
+        if game.Players.LocalPlayer.Character then
+            for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+Rayfield:Notify({Title = "Tiger INF Загружен", Content = "Используй Noclip, чтобы проходить сквозь стены"})
