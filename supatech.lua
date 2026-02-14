@@ -1,42 +1,63 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/7Lib/UI-Library/main/Source.lua"))() -- Простая библиотека для GUI
+--[[
+    Supa Combo Assistant (TSB)
+    Функционал: 3 клика + 4-й (вверх) + авто-прыжок и дэш
+]]
 
-local Window = Library.CreateLib("TSB Combo Script", "DarkTheme")
-local Tab = Window:NewTab("Main")
-local Section = Tab:NewSection("Combo Settings")
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Supa Tech Lite", "BloodTheme")
+local Main = Window:NewTab("Main")
+local Section = Main:NewSection("Combo Settings")
 
-local enabled = false
-local clickCount = 0
+local autoUpEnabled = false
+local hitCounter = 0
+local lastHitTime = 0
 
-Section:NewToggle("Включить Авто-Дэш", "Включает комбо после 4 удара", function(state)
-    enabled = state
-    clickCount = 0
+Section:NewToggle("Auto Up-Combo", "3 Hits + 4th Lift + Auto Dash", function(state)
+    autoUpEnabled = state
+    hitCounter = 0
 end)
 
--- Логика отслеживания кликов
 local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local vim = game:GetService("VirtualInputManager")
 
-mouse.Button1Down:Connect(function()
-    if not enabled then return end
+-- Функция для выполнения прыжка и дэша
+local function performUpCombo()
+    task.wait(0.15) -- Тайминг подброса (подстрой под пинг)
     
-    clickCount = clickCount + 1
+    -- Прыжок
+    character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     
-    -- Сбрасываем счетчик, если пауза между кликами слишком большая (больше 1.5 сек)
-    task.delay(1.5, function()
-        if clickCount > 0 then clickCount = 0 end
-    end)
+    task.wait(0.1)
+    
+    -- Эмуляция нажатия кнопки Q (Дэш)
+    vim:SendKeyEvent(true, Enum.KeyCode.Q, false, game)
+    task.wait(0.05)
+    vim:SendKeyEvent(false, Enum.KeyCode.Q, false, game)
+end
 
-    -- Если это 4-й удар (подброс вверх)
-    if clickCount == 4 then
-        task.wait(0.1) -- Небольшая задержка, чтобы анимация началась
+-- Отслеживание кликов мыши
+game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
+    if gpe or not autoUpEnabled then return end
+    
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local currentTime = tick()
         
-        -- Прыгаем вместе с противником
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        -- Если прошло больше 1.2 сек, сбрасываем счетчик (комбо прервано)
+        if currentTime - lastHitTime > 1.2 then
+            hitCounter = 0
+        end
         
-        -- Авто-дэш (имитация нажатия Q)
-        task.wait(0.1)
-        game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.Q, false, game)
+        hitCounter = hitCounter + 1
+        lastHitTime = currentTime
         
-        clickCount = 0 -- Обнуляем после комбо
+        -- На 4-м клике запускаем логику подъема
+        if hitCounter == 4 then
+            performUpCombo()
+            hitCounter = 0 -- Сброс после выполнения
+        end
     end
 end)
+
+print("Supa Tech Lite загружен!")
